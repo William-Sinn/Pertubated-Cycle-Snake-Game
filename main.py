@@ -4,8 +4,8 @@ import random
 
 GAME_WIDTH = 690
 GAME_HEIGHT = 690
-SPACE = 345
-SPEED = 1000
+SPACE = 23
+SPEED = 50
 START_SIZE = 1
 SNAKE_COLOR = "#00FF00"
 FOOD_COLOR = "#FF0000"
@@ -136,18 +136,48 @@ def game_end():
                        text="Game Over!\nSteps:{}\nVictory:{}".format(steps, victory))
 
 
-# initial_setup = True
-#
-# config_widow = Tk()
-# config_widow.title("Snake! - settings")
-# config_widow.geometry('300x300')
-#
-# test = Scale(config_widow, from_=1, to=200, orient=HORIZONTAL)
-# test.pack()
-# start = Button(config_widow, text="Start!", font="Times").pack()
-#
-# while not initial_setup:
-#     sleep(0.05)
+def new_speed(var):
+    global SPEED
+    SPEED = game_speed.get()
+
+
+def game_start():
+    global SPEED, SPACE, initial_setup
+    SPEED = speed.get()
+    SPACE = space.get()
+
+    config_widow.destroy()
+    initial_setup = True
+
+
+initial_setup = False
+
+config_widow = Tk()
+config_widow.title("Snake! - settings")
+config_widow.geometry('300x300')
+speed_label = Label(config_widow, text="Speed, can be changed later", font=("Times", 10)).pack()
+speed = Scale(config_widow, from_=1, to=500, orient=HORIZONTAL)
+speed.pack()
+speed.set(SPEED)
+
+space = IntVar()
+grid_label = Label(config_widow, text='Size "N", can NOT be changed later:', font=("Times", 10)).pack()
+N3 = Radiobutton(config_widow, text="N=3", value=230, variable=space)
+N3.pack()
+N5 = Radiobutton(config_widow, text="N=5", value=138, variable=space)
+N5.pack()
+N10 = Radiobutton(config_widow, text="N=10", value=69, variable=space)
+N10.pack()
+N15 = Radiobutton(config_widow, text="N=15", value=46, variable=space)
+N15.pack()
+N30 = Radiobutton(config_widow, text="N=30", value=23, variable=space)
+N30.pack()
+
+start = Button(config_widow, text="Start!", font="Times", command=game_start).pack()
+config_widow.mainloop()
+
+while not initial_setup:
+    sleep(0.05)
 
 window = Tk()
 window.title("Snake!")
@@ -159,6 +189,10 @@ direc = 'right'
 
 label = Label(window, text="Steps:{}".format(steps), font=('Times', 40))
 label.pack()
+
+game_speed = Scale(window, from_=1, to=500, orient=HORIZONTAL, command=new_speed)
+game_speed.set(SPEED)
+game_speed.pack()
 
 canvas = Canvas(window, bg=BG_COLOR, height=GAME_HEIGHT, width=GAME_WIDTH)
 canvas.pack()
