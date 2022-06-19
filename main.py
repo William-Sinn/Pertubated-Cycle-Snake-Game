@@ -1,12 +1,12 @@
 from tkinter import *
-
+from time import sleep
 import random
 
-GAME_WIDTH = 700
-GAME_HEIGHT = 700
-SPACE = 50
-SPEED = 500
-START_SIZE = 5
+GAME_WIDTH = 690
+GAME_HEIGHT = 690
+SPACE = 345
+SPEED = 1000
+START_SIZE = 1
 SNAKE_COLOR = "#00FF00"
 FOOD_COLOR = "#FF0000"
 BG_COLOR = "#000000"
@@ -27,13 +27,26 @@ class Snake:
 
 
 class Apple:
-    def __init__(self):
+    def __init__(self, snake_object):
         y = random.randint(0, int(GAME_WIDTH / SPACE) - 1) * SPACE
         x = random.randint(0, int(GAME_WIDTH / SPACE) - 1) * SPACE
 
-        self.cords = [x, y]
+        while (x, y) in snake_object.cords:
+            y = random.randint(0, int(GAME_WIDTH / SPACE) - 1) * SPACE
+            x = random.randint(0, int(GAME_WIDTH / SPACE) - 1) * SPACE
 
+        self.cords = [x, y]
         canvas.create_rectangle(x, y, x + SPACE, y + SPACE, fill=FOOD_COLOR, tag="apple")
+
+
+def check_full_board(snake_object):
+    for x in range(0, int(GAME_WIDTH / SPACE) - 1):
+        for y in range(0, int(GAME_WIDTH / SPACE) - 1):
+            if (x * SPACE, y * SPACE) not in snake_object.cords:
+                return False
+    global victory
+    victory = True
+    return True
 
 
 def turn_progress(snake_object, apple_object):
@@ -60,7 +73,8 @@ def turn_progress(snake_object, apple_object):
         if x == apple_object.cords[0] and y == apple_object.cords[1]:
             canvas.delete("apple")
 
-            apple_object = Apple()
+            if not check_full_board(snake_object):
+                apple_object = Apple(snake_object)
 
         else:
             del snake_object.cords[-1]
@@ -117,14 +131,29 @@ def collision_check(snake_object):
 
 def game_end():
     canvas.delete(ALL)
+    canvas.config(bg="white")
     canvas.create_text(canvas.winfo_width() / 2, canvas.winfo_height() / 2, font=("Times", 60),
-                       text="Game Over!\nSteps:{}".format(steps), fill="blue")
+                       text="Game Over!\nSteps:{}\nVictory:{}".format(steps, victory))
 
+
+# initial_setup = True
+#
+# config_widow = Tk()
+# config_widow.title("Snake! - settings")
+# config_widow.geometry('300x300')
+#
+# test = Scale(config_widow, from_=1, to=200, orient=HORIZONTAL)
+# test.pack()
+# start = Button(config_widow, text="Start!", font="Times").pack()
+#
+# while not initial_setup:
+#     sleep(0.05)
 
 window = Tk()
 window.title("Snake!")
 window.resizable(False, False)
 
+victory = False
 steps = 0
 direc = 'right'
 
@@ -140,7 +169,7 @@ window.bind('<Up>', lambda event: next_direction('up'))
 window.bind('<Down>', lambda event: next_direction('down'))
 
 snake = Snake()
-apple = Apple()
+apple = Apple(snake)
 turn_progress(snake, apple)
 
 window.mainloop()
