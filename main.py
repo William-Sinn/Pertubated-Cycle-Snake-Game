@@ -156,7 +156,7 @@ config_widow = Tk()
 config_widow.title("Snake! - settings")
 config_widow.geometry('300x300')
 speed_label = Label(config_widow, text="Speed, can be changed later", font=("Times", 10)).pack()
-speed = Scale(config_widow, from_=1, to=1000, orient=HORIZONTAL)
+speed = Scale(config_widow, from_=1, to=100, orient=HORIZONTAL)
 speed.pack()
 speed.set(SPEED)
 
@@ -186,7 +186,7 @@ direc = 'right'
 label = Label(window, text="Steps:{}".format(steps), font=('Times', 40))
 label.pack()
 
-game_speed = Scale(window, from_=1, to=1000, orient=HORIZONTAL, command=new_speed)
+game_speed = Scale(window, from_=1, to=100, orient=HORIZONTAL, command=new_speed)
 game_speed.set(SPEED)
 game_speed.pack()
 
