@@ -172,8 +172,8 @@ space.set(23)
 start = Button(config_widow, text="Start!", font="Times", command=game_start).pack()
 config_widow.mainloop()
 
-while not initial_setup:
-    sleep(0.05)
+if not initial_setup:
+    quit()
 
 window = Tk()
 window.title("Snake!")
