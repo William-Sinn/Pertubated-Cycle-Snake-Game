@@ -2,9 +2,9 @@ from tkinter import *
 from time import sleep
 import random
 
-GAME_WIDTH = 690
-GAME_HEIGHT = 690
-SPACE = 23
+GAME_WIDTH = 660
+GAME_HEIGHT = 660
+SPACE = 22
 SPEED = 50
 START_SIZE = 1
 SNAKE_COLOR = "#00FF00"
@@ -89,6 +89,9 @@ def turn_progress(snake_object, apple_object):
 
         window.after(SPEED, turn_progress, snake_object, apple_object)
 
+        if player_type.get() == 1:
+            snake_turn(snake, path)
+
     else:
         game_end()
 
@@ -152,11 +155,49 @@ def game_start():
     initial_setup = True
 
 
+def generate_path(n):
+    matrix = []
+    array = []
+    for i in range(n):
+        for j in range(n):
+            array.append(i * n + j)
+        matrix.append(array)
+        array = []
+    return matrix
+
+
+def snake_turn(snake_object, matrix):
+    global direc
+    x = int(snake_object.cords[0][0] / space.get())
+    y = int(snake_object.cords[0][1] / space.get())
+    curr_position = matrix[y][x]
+
+    if y - 1 > -1:
+        up = matrix[y - 1][x]
+        if up == (curr_position + 1) or (curr_position == ((len(matrix) ** 2) - 1) and up == 0):
+            direc = 'up'
+
+    if y + 1 < len(matrix):
+        down = matrix[y + 1][x]
+        if down == (curr_position + 1) or (curr_position == ((len(matrix) ** 2) - 1) and down == 0):
+            direc = 'down'
+
+    if x - 1 > -1:
+        left = matrix[y][x - 1]
+        if left == (curr_position + 1) or (curr_position == ((len(matrix) ** 2) - 1) and left == 0):
+            direc = 'left'
+
+    if x + 1 < len(matrix):
+        right = matrix[y][x + 1]
+        if right == (curr_position + 1) or (curr_position == ((len(matrix) ** 2) - 1) and right == 0):
+            direc = 'right'
+
+
 initial_setup = False
 
 config_widow = Tk()
 config_widow.title("Snake! - settings")
-config_widow.geometry('300x300')
+config_widow.geometry('300x325')
 speed_label = Label(config_widow, text="Speed, can be changed later", font=("Times", 10)).pack()
 speed = Scale(config_widow, from_=1, to=500, orient=HORIZONTAL)
 speed.pack()
@@ -164,12 +205,18 @@ speed.set(SPEED)
 
 space = IntVar()
 grid_label = Label(config_widow, text='Size "N", can NOT be changed later:', font=("Times", 10)).pack()
-Radiobutton(config_widow, text="N=3", value=230, variable=space).pack()
-Radiobutton(config_widow, text="N=5", value=138, variable=space).pack()
-Radiobutton(config_widow, text="N=10", value=69, variable=space).pack()
-Radiobutton(config_widow, text="N=15", value=46, variable=space).pack()
-Radiobutton(config_widow, text="N=30", value=23, variable=space).pack()
-space.set(23)
+Radiobutton(config_widow, text="N=4", value=165, variable=space).pack()
+Radiobutton(config_widow, text="N=6", value=110, variable=space).pack()
+Radiobutton(config_widow, text="N=10", value=66, variable=space).pack()
+Radiobutton(config_widow, text="N=20", value=33, variable=space).pack()
+Radiobutton(config_widow, text="N=30", value=22, variable=space).pack()
+space.set(22)
+
+player_type = IntVar()
+player_label = Label(config_widow, text='Human, Unoptimized AI, or Optimized AI Player?', font=("Times", 10)).pack()
+Radiobutton(config_widow, text="Human", value=0, variable=player_type).pack()
+Radiobutton(config_widow, text="Unoptimized", value=1, variable=player_type).pack()
+Radiobutton(config_widow, text="Optimized", value=2, variable=player_type).pack()
 
 start = Button(config_widow, text="Start!", font="Times", command=game_start).pack()
 config_widow.mainloop()
@@ -196,10 +243,19 @@ game_speed.pack()
 canvas = Canvas(window, bg=BG_COLOR, height=GAME_HEIGHT, width=GAME_WIDTH)
 canvas.pack()
 
-window.bind('<Left>', lambda event: next_direction('left'))
-window.bind('<Right>', lambda event: next_direction('right'))
-window.bind('<Up>', lambda event: next_direction('up'))
-window.bind('<Down>', lambda event: next_direction('down'))
+if player_type.get() == 0:
+    window.bind('<Left>', lambda event: next_direction('left'))
+    window.bind('<Right>', lambda event: next_direction('right'))
+    window.bind('<Up>', lambda event: next_direction('up'))
+    window.bind('<Down>', lambda event: next_direction('down'))
+
+if player_type.get() == 1:
+    path = [
+        [2, 1, 12, 11],
+        [3, 0, 13, 10],
+        [4, 15, 14, 9],
+        [5, 6, 7, 8]
+    ]  # generate_path(int(GAME_WIDTH / space.get()))
 
 snake = Snake()
 apple = Apple(snake)
