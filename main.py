@@ -50,7 +50,9 @@ def check_full_board(snake_object):
 
 
 def turn_progress(snake_object, apple_object):
+    global prev_direc
     x, y = snake_object.cords[0]
+    prev_direc = direc
 
     if direc == 'up':
         y -= SPACE
@@ -92,22 +94,22 @@ def turn_progress(snake_object, apple_object):
 
 
 def next_direction(new_direc):
-    global direc
+    global prev_direc, direc
 
     if new_direc == 'left':
-        if direc != 'right':
+        if prev_direc != 'right':
             direc = new_direc
 
     elif new_direc == 'right':
-        if direc != 'left':
+        if prev_direc != 'left':
             direc = new_direc
 
     elif new_direc == 'up':
-        if direc != 'down':
+        if prev_direc != 'down':
             direc = new_direc
 
     elif new_direc == 'down':
-        if direc != 'up':
+        if prev_direc != 'up':
             direc = new_direc
 
 
@@ -156,7 +158,7 @@ config_widow = Tk()
 config_widow.title("Snake! - settings")
 config_widow.geometry('300x300')
 speed_label = Label(config_widow, text="Speed, can be changed later", font=("Times", 10)).pack()
-speed = Scale(config_widow, from_=1, to=100, orient=HORIZONTAL)
+speed = Scale(config_widow, from_=1, to=500, orient=HORIZONTAL)
 speed.pack()
 speed.set(SPEED)
 
@@ -182,11 +184,12 @@ window.resizable(False, False)
 victory = False
 steps = 0
 direc = 'right'
+prev_direc = ''
 
 label = Label(window, text="Steps:{}".format(steps), font=('Times', 40))
 label.pack()
 
-game_speed = Scale(window, from_=1, to=100, orient=HORIZONTAL, command=new_speed)
+game_speed = Scale(window, from_=1, to=500, orient=HORIZONTAL, command=new_speed)
 game_speed.set(SPEED)
 game_speed.pack()
 
