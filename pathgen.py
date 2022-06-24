@@ -1,6 +1,5 @@
 import random
-from test import *
-from deepdiff import DeepDiff
+
 
 def prim_maze_gen(n):
     dirs = {}
@@ -62,27 +61,70 @@ def ham_cycle_gen(dirs, n):
 
     for i in range(n):
         for j in range(n):
-            if j > 0:
+            if j != n - 1 and i != n - 1 and j != 0 and i != 0:
+                if 'right' in dirs[j, i]:
+                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
+                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
+                else:
+                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                if 'down' in dirs[j, i]:
+                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
+                    if (j * 2 + 1, i * 2 + 1) in ham_cycle:
+                        ham_cycle[j * 2 + 1, i * 2 + 1] += [(j * 2 + 1, i * 2 + 2)]
+                    else:
+                        ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 1, i * 2 + 2)]
+                else:
+                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                if 'down' not in dirs[j, i - 1]:
+                    ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
                 if 'right' not in dirs[j - 1, i]:
                     if (j * 2, i * 2) in ham_cycle:
                         ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
                     else:
                         ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
 
-            if j < n - 1:
+            elif j == n - 1 and i == n - 1:
+                ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                if 'down' not in dirs[j, i - 1]:
+                    ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
+                elif 'right' not in dirs[j - 1, i]:
+                    ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
+
+            elif j == n - 1 and i == 0:
+                ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
+                ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                if 'down' in dirs[j, i]:
+                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
+                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 1, i * 2 + 2)]
+                else:
+                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                if 'right' not in dirs[j - 1, i]:
+                    ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
+
+            elif j == n - 1:
+                ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                if 'down' in dirs[j, i]:
+                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
+                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 1, i * 2 + 2)]
+                else:
+                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                if 'down' not in dirs[j, i - 1]:
+                    ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
+                if 'right' not in dirs[j - 1, i]:
+                    if (j * 2, i * 2) in ham_cycle:
+                        ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
+                    else:
+                        ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
+
+            elif j == 0 and i == 0:
+                ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
+                ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
                 if 'right' in dirs[j, i]:
                     ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
                     ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
                 else:
                     ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
-
-            if i > 0:
-                if 'down' not in dirs[j, i - 1]:
-                    ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
-                if ham_cycle == 0:
-                    ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
-
-            if i < n - 1:
                 if 'down' in dirs[j, i]:
                     ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
                     if (j * 2 + 1, i * 2 + 1) in ham_cycle:
@@ -92,24 +134,67 @@ def ham_cycle_gen(dirs, n):
                 else:
                     ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
 
-            if j == n - 1:
-                ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
-            if j == 0:
-                ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
-            if i == 0:
-                ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
-            if i == n - 1:
-                ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
-            if j == 0 and i == 0:
-                ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
-                ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
-            if j == n - 1 and i == 0:
-                ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
-                ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
-            if j == 0 and i == n - 1:
+            elif j == 0 and i == n - 1:
                 ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
                 ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                if 'right' in dirs[j, i]:
+                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
+                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
+                else:
+                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                if 'down' not in dirs[j, i - 1]:
+                    ham_cycle[j * 2, i * 2] += [(j * 2 + 1, i * 2)]
 
+            elif j == 0:
+                ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
+                if 'right' in dirs[j, i]:
+                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
+                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
+                else:
+                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                if 'down' in dirs[j, i]:
+                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
+                    if (j * 2 + 1, i * 2 + 1) in ham_cycle:
+                        ham_cycle[j * 2 + 1, i * 2 + 1] += [(j * 2 + 1, i * 2 + 2)]
+                    else:
+                        ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 1, i * 2 + 2)]
+                else:
+                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                if 'down' not in dirs[j, i - 1]:
+                    ham_cycle[j * 2, i * 2] += [(j * 2 + 1, i * 2)]
+
+            elif i == 0:
+                ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
+                if 'right' in dirs[j, i]:
+                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
+                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
+                else:
+                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                if 'down' in dirs[j, i]:
+                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
+                    if (j * 2 + 1, i * 2 + 1) in ham_cycle:
+                        ham_cycle[j * 2 + 1, i * 2 + 1] += [(j * 2 + 1, i * 2 + 2)]
+                    else:
+                        ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 1, i * 2 + 2)]
+                else:
+                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                if 'right' not in dirs[j - 1, i]:
+                    ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
+
+            else:
+                ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                if 'right' in dirs[j, i]:
+                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
+                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
+                else:
+                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                if 'down' not in dirs[j, i - 1]:
+                    ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
+                if 'right' not in dirs[j - 1, i]:
+                    if (j * 2, i * 2) in ham_cycle:
+                        ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
+                    else:
+                        ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
     return ham_cycle
 
 
@@ -153,21 +238,3 @@ def matrix_conv(cycle, n):
         matrix_path[cords[1]][cords[0]] = i
         i += 1
     return matrix_path
-
-
-pling = prim_maze_gen(3)
-pest = ham_cycle_gen(pling, 3)
-print(pest)
-ruff = matrix_conv(pest, 6)
-# print("prim maze", ruff)
-thing = prim_maze_gen(3)
-test = hamiltonian_cycle(3, 3, pling)
-print(test)
-print(DeepDiff(pest, test))
-# test = ham_cycle_gen(thing, 3)
-stuff = matrix_conv(test, 6)
-# print("my maze", stuff)
-maze = prim_maze_generator(3, 3)
-ham = hamiltonian_cycle(3, 3, maze)
-result = path_generator(ham, 3 * 3 * 4)
-# print("Proper result", result)
