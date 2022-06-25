@@ -182,12 +182,14 @@ def optimized_snake_turn(snake_object, apple_object, matrix):
     cutting_space = tail_dist - len(snake_object.cords) - 3
     empty_spaces = board_size - len(snake_object.cords)
 
-    if empty_spaces < board_size / 2:
-        cutting_space = 0
-    if apple_dist < tail_dist:
-        cutting_space -= (len(snake_object.cords))
-        if (tail_dist - apple_dist) * 4 > empty_spaces:
-            cutting_space -= 10
+    global tapsell_bind
+    if tapsell_bind.get():
+        if empty_spaces < board_size / 2:
+            cutting_space = 0
+        if apple_dist < tail_dist:
+            cutting_space -= (len(snake_object.cords))
+            if (tail_dist - apple_dist) * 4 > empty_spaces:
+                cutting_space -= 10
 
     desired_space = apple_dist
     if desired_space < cutting_space:
@@ -279,7 +281,7 @@ initial_setup = False
 
 config_widow = Tk()
 config_widow.title("Snake! - settings")
-config_widow.geometry('300x325')
+config_widow.geometry('300x340')
 Label(config_widow, text="Speed, can be changed later", font=("Times", 10)).pack()
 speed = Scale(config_widow, from_=1, to=500, orient=HORIZONTAL)
 speed.pack()
@@ -295,10 +297,13 @@ Radiobutton(config_widow, text="N=30", value=22, variable=space).pack()
 space.set(22)
 
 player_type = IntVar()
+tapsell_bind = BooleanVar()
 Label(config_widow, text='Human, Unoptimized AI, or Optimized AI Player?', font=("Times", 10)).pack()
 Radiobutton(config_widow, text="Human", value=0, variable=player_type).pack()
 Radiobutton(config_widow, text="Unoptimized", value=1, variable=player_type).pack()
 Radiobutton(config_widow, text="Optimized", value=2, variable=player_type).pack()
+Checkbutton(config_widow, text="Enable Tapsell's Bind?", variable=tapsell_bind).pack()
+tapsell_bind.set(True)
 
 Button(config_widow, text="Start!", font="Times", command=game_start).pack()
 config_widow.mainloop()
@@ -336,6 +341,7 @@ else:
     maze = prim_maze_gen(int(n / 2))
     cycle = ham_cycle_gen(maze, int(n / 2))
     path = matrix_conv(cycle, n)
+
 
 snake = Snake()
 apple = Apple(snake)
