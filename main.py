@@ -66,7 +66,8 @@ def turn_progress(snake_object, apple_object):
         x += SPACE
 
     snake_object.cords.insert(0, (x, y))
-    if not collision_check(snake_object):
+    x_temp, y_temp = snake_object.cords[0]
+    if not collision_check(x_temp, y_temp, snake_object):
 
         square = canvas.create_rectangle(x, y, x + SPACE, y + SPACE, fill=SNAKE_COLOR)
         snake_object.squares.insert(0, square)
@@ -89,7 +90,9 @@ def turn_progress(snake_object, apple_object):
         window.after(SPEED, turn_progress, snake_object, apple_object)
 
         if player_type.get() == 1:
-            snake_turn(snake, path)
+            simple_snake_turn(snake, path)
+        if player_type.get() == 2:
+            optimized_snake_turn(snake_object, apple_object, path)
 
     else:
         game_end()
@@ -115,25 +118,21 @@ def next_direction(new_direc):
             direc = new_direc
 
 
-def collision_check(snake_object):
-    x, y = snake_object.cords[0]
-
+def collision_check(x, y, snake_object):
     if x < 0 or x >= GAME_WIDTH:
-        print("game end")
         return True
     elif y < 0 or y >= GAME_HEIGHT:
-        print("game end")
         return True
 
     for segment in snake_object.cords[1:]:
         if x == segment[0] and y == segment[1]:
-            print("game end")
             return True
 
     return False
 
 
 def game_end():
+    global direc
     canvas.delete(ALL)
     canvas.config(bg="white")
     canvas.create_text(canvas.winfo_width() / 2, canvas.winfo_height() / 2, font=("Times", 60),
@@ -154,7 +153,102 @@ def game_start():
     initial_setup = True
 
 
-def snake_turn(snake_object, matrix):
+def get_dist(a, b):
+    if a < b:
+        return b - a - 1
+    else:
+        return b - a - 1 + int(GAME_WIDTH / space.get()) ** 2
+
+
+def optimized_snake_turn(snake_object, apple_object, matrix):
+    global direc
+    x = int(snake_object.cords[0][0] / space.get())
+    y = int(snake_object.cords[0][1] / space.get())
+
+    i = int(apple_object.cords[0] / space.get())
+    j = int(apple_object.cords[1] / space.get())
+
+    a = int(snake_object.cords[-1][0] / space.get())
+    b = int(snake_object.cords[-1][1] / space.get())
+
+    head_position = matrix[x][y]
+    apple_position = matrix[i][j]
+    tail_position = matrix[a][b]
+    board_size_n = int(GAME_WIDTH / space.get())
+    board_size = board_size_n ** 2
+
+    apple_dist = get_dist(head_position, apple_position)
+    tail_dist = get_dist(head_position, tail_position)
+    cutting_space = tail_dist - len(snake_object.cords) - 3
+    empty_spaces = board_size - len(snake_object.cords)
+
+    if empty_spaces < board_size / 2:
+        cutting_space = 0
+    if apple_dist < tail_dist:
+        cutting_space -= (len(snake_object.cords))
+        if (tail_dist - apple_dist) * 4 > empty_spaces:
+            cutting_space -= 10
+
+    desired_space = apple_dist
+    if desired_space < cutting_space:
+        cutting_space = desired_space
+    if cutting_space < 0:
+        cutting_space = 0
+
+    can_go_right = not collision_check((x + 1) * space.get(), y * space.get(), snake_object)
+    can_go_left = not collision_check((x - 1) * space.get(), y * space.get(), snake_object)
+    can_go_down = not collision_check(x * space.get(), (y + 1) * space.get(), snake_object)
+    can_go_up = not collision_check(x * space.get(), (y - 1) * space.get(), snake_object)
+
+    best_dir = 'none'
+    best_dist = -1
+
+    if can_go_right and x + 1 < board_size_n:
+        dist = get_dist(head_position, matrix[x + 1][y])
+        if cutting_space >= dist > best_dist:
+            best_dir = 'right'
+            best_dist = dist
+
+    if can_go_left and x - 1 > - 1:
+        dist = get_dist(head_position, matrix[x - 1][y])
+        if cutting_space >= dist > best_dist:
+            best_dir = 'left'
+            best_dist = dist
+
+    if can_go_down and y + 1 < board_size_n:
+        dist = get_dist(head_position, matrix[x][y + 1])
+        if cutting_space >= dist > best_dist:
+            best_dir = 'down'
+            best_dist = dist
+
+    if can_go_up and y - 1 > -1:
+        dist = get_dist(head_position, matrix[x][y - 1])
+        if cutting_space >= dist > best_dist:
+            best_dir = 'up'
+            best_dist = dist
+
+    if best_dist >= 0:
+        direc = best_dir
+        return
+
+    if can_go_up:
+        direc = 'up'
+        return
+
+    if can_go_left:
+        direc = 'left'
+        return
+
+    if can_go_down:
+        direc = 'down'
+        return
+
+    if can_go_right:
+        direc = 'right'
+        return
+
+
+def simple_snake_turn(snake_object, matrix):
     global direc
     x = int(snake_object.cords[0][0] / space.get())
     y = int(snake_object.cords[0][1] / space.get())
@@ -237,10 +331,10 @@ if player_type.get() == 0:
     window.bind('<Up>', lambda event: next_direction('up'))
     window.bind('<Down>', lambda event: next_direction('down'))
 
-if player_type.get() == 1:
+else:
     n = int(GAME_WIDTH / space.get())
-    maze = prim_maze_gen(int(n/2))
-    cycle = ham_cycle_gen(maze, int(n/2))
+    maze = prim_maze_gen(int(n / 2))
+    cycle = ham_cycle_gen(maze, int(n / 2))
     path = matrix_conv(cycle, n)
 
 snake = Snake()

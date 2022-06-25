@@ -61,140 +61,143 @@ def ham_cycle_gen(dirs, n):
 
     for i in range(n):
         for j in range(n):
+            cycle_x = j * 2
+            cycle_y = i * 2
+
             if j != n - 1 and i != n - 1 and j != 0 and i != 0:
                 if 'right' in dirs[j, i]:
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
-                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 2, cycle_y)]
+                    ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 2, cycle_y + 1)]
                 else:
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' in dirs[j, i]:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
-                    if (j * 2 + 1, i * 2 + 1) in ham_cycle:
-                        ham_cycle[j * 2 + 1, i * 2 + 1] += [(j * 2 + 1, i * 2 + 2)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x, cycle_y + 2)]
+                    if (cycle_x + 1, cycle_y + 1) in ham_cycle:
+                        ham_cycle[cycle_x + 1, cycle_y + 1] += [(cycle_x + 1, cycle_y + 2)]
                     else:
-                        ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 1, i * 2 + 2)]
+                        ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 1, cycle_y + 2)]
                 else:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' not in dirs[j, i - 1]:
-                    ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
+                    ham_cycle[cycle_x, cycle_y] = [(cycle_x + 1, cycle_y)]
                 if 'right' not in dirs[j - 1, i]:
-                    if (j * 2, i * 2) in ham_cycle:
-                        ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
+                    if (cycle_x, cycle_y) in ham_cycle:
+                        ham_cycle[cycle_x, cycle_y] += [(cycle_x, cycle_y + 1)]
                     else:
-                        ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
+                        ham_cycle[cycle_x, cycle_y] = [(cycle_x, cycle_y + 1)]
 
             elif j == n - 1 and i == n - 1:
-                ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
-                ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x + 1, cycle_y + 1)]
+                ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' not in dirs[j, i - 1]:
-                    ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
+                    ham_cycle[cycle_x, cycle_y] = [(cycle_x + 1, cycle_y)]
                 elif 'right' not in dirs[j - 1, i]:
-                    ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
+                    ham_cycle[cycle_x, cycle_y] = [(cycle_x, cycle_y + 1)]
 
             elif j == n - 1 and i == 0:
-                ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
-                ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                ham_cycle[cycle_x, cycle_y] = [(cycle_x + 1, cycle_y)]
+                ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' in dirs[j, i]:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
-                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 1, i * 2 + 2)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x, cycle_y + 2)]
+                    ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 1, cycle_y + 2)]
                 else:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x + 1, cycle_y + 1)]
                 if 'right' not in dirs[j - 1, i]:
-                    ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
+                    ham_cycle[cycle_x, cycle_y] += [(cycle_x, cycle_y + 1)]
 
             elif j == n - 1:
-                ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' in dirs[j, i]:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
-                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 1, i * 2 + 2)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x, cycle_y + 2)]
+                    ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 1, cycle_y + 2)]
                 else:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' not in dirs[j, i - 1]:
-                    ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
+                    ham_cycle[cycle_x, cycle_y] = [(cycle_x + 1, cycle_y)]
                 if 'right' not in dirs[j - 1, i]:
-                    if (j * 2, i * 2) in ham_cycle:
-                        ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
+                    if (cycle_x, cycle_y) in ham_cycle:
+                        ham_cycle[cycle_x, cycle_y] += [(cycle_x, cycle_y + 1)]
                     else:
-                        ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
+                        ham_cycle[cycle_x, cycle_y] = [(cycle_x, cycle_y + 1)]
 
             elif j == 0 and i == 0:
-                ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
-                ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
+                ham_cycle[cycle_x, cycle_y] = [(cycle_x + 1, cycle_y)]
+                ham_cycle[cycle_x, cycle_y] += [(cycle_x, cycle_y + 1)]
                 if 'right' in dirs[j, i]:
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
-                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 2, cycle_y)]
+                    ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 2, cycle_y + 1)]
                 else:
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' in dirs[j, i]:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
-                    if (j * 2 + 1, i * 2 + 1) in ham_cycle:
-                        ham_cycle[j * 2 + 1, i * 2 + 1] += [(j * 2 + 1, i * 2 + 2)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x, cycle_y + 2)]
+                    if (cycle_x + 1, cycle_y + 1) in ham_cycle:
+                        ham_cycle[cycle_x + 1, cycle_y + 1] += [(cycle_x + 1, cycle_y + 2)]
                     else:
-                        ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 1, i * 2 + 2)]
+                        ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 1, cycle_y + 2)]
                 else:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x + 1, cycle_y + 1)]
 
             elif j == 0 and i == n - 1:
-                ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
-                ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                ham_cycle[cycle_x, cycle_y] = [(cycle_x, cycle_y + 1)]
+                ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x + 1, cycle_y + 1)]
                 if 'right' in dirs[j, i]:
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
-                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 2, cycle_y)]
+                    ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 2, cycle_y + 1)]
                 else:
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' not in dirs[j, i - 1]:
-                    ham_cycle[j * 2, i * 2] += [(j * 2 + 1, i * 2)]
+                    ham_cycle[cycle_x, cycle_y] += [(cycle_x + 1, cycle_y)]
 
             elif j == 0:
-                ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
+                ham_cycle[cycle_x, cycle_y] = [(cycle_x, cycle_y + 1)]
                 if 'right' in dirs[j, i]:
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
-                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 2, cycle_y)]
+                    ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 2, cycle_y + 1)]
                 else:
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' in dirs[j, i]:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
-                    if (j * 2 + 1, i * 2 + 1) in ham_cycle:
-                        ham_cycle[j * 2 + 1, i * 2 + 1] += [(j * 2 + 1, i * 2 + 2)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x, cycle_y + 2)]
+                    if (cycle_x + 1, cycle_y + 1) in ham_cycle:
+                        ham_cycle[cycle_x + 1, cycle_y + 1] += [(cycle_x + 1, cycle_y + 2)]
                     else:
-                        ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 1, i * 2 + 2)]
+                        ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 1, cycle_y + 2)]
                 else:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' not in dirs[j, i - 1]:
-                    ham_cycle[j * 2, i * 2] += [(j * 2 + 1, i * 2)]
+                    ham_cycle[cycle_x, cycle_y] += [(cycle_x + 1, cycle_y)]
 
             elif i == 0:
-                ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
+                ham_cycle[cycle_x, cycle_y] = [(cycle_x + 1, cycle_y)]
                 if 'right' in dirs[j, i]:
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
-                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 2, cycle_y)]
+                    ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 2, cycle_y + 1)]
                 else:
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' in dirs[j, i]:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2, i * 2 + 2)]
-                    if (j * 2 + 1, i * 2 + 1) in ham_cycle:
-                        ham_cycle[j * 2 + 1, i * 2 + 1] += [(j * 2 + 1, i * 2 + 2)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x, cycle_y + 2)]
+                    if (cycle_x + 1, cycle_y + 1) in ham_cycle:
+                        ham_cycle[cycle_x + 1, cycle_y + 1] += [(cycle_x + 1, cycle_y + 2)]
                     else:
-                        ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 1, i * 2 + 2)]
+                        ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 1, cycle_y + 2)]
                 else:
-                    ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x + 1, cycle_y + 1)]
                 if 'right' not in dirs[j - 1, i]:
-                    ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
+                    ham_cycle[cycle_x, cycle_y] += [(cycle_x, cycle_y + 1)]
 
             else:
-                ham_cycle[j * 2, i * 2 + 1] = [(j * 2 + 1, i * 2 + 1)]
+                ham_cycle[cycle_x, cycle_y + 1] = [(cycle_x + 1, cycle_y + 1)]
                 if 'right' in dirs[j, i]:
-                    ham_cycle[j * 2 + 1, i * 2 + 1] = [(j * 2 + 2, i * 2 + 1)]
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 2, i * 2)]
+                    ham_cycle[cycle_x + 1, cycle_y + 1] = [(cycle_x + 2, cycle_y + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 2, cycle_y)]
                 else:
-                    ham_cycle[j * 2 + 1, i * 2] = [(j * 2 + 1, i * 2 + 1)]
+                    ham_cycle[cycle_x + 1, cycle_y] = [(cycle_x + 1, cycle_y + 1)]
                 if 'down' not in dirs[j, i - 1]:
-                    ham_cycle[j * 2, i * 2] = [(j * 2 + 1, i * 2)]
+                    ham_cycle[cycle_x, cycle_y] = [(cycle_x + 1, cycle_y)]
                 if 'right' not in dirs[j - 1, i]:
-                    if (j * 2, i * 2) in ham_cycle:
-                        ham_cycle[j * 2, i * 2] += [(j * 2, i * 2 + 1)]
+                    if (cycle_x, cycle_y) in ham_cycle:
+                        ham_cycle[cycle_x, cycle_y] += [(cycle_x, cycle_y + 1)]
                     else:
-                        ham_cycle[j * 2, i * 2] = [(j * 2, i * 2 + 1)]
+                        ham_cycle[cycle_x, cycle_y] = [(cycle_x, cycle_y + 1)]
     return ham_cycle
 
 
